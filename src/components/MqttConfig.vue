@@ -1,5 +1,31 @@
 <template>
   <div>
+    <div v-bind:class="serverDownModelClassObject" class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Server error</p>
+        </header>
+        <section class="modal-card-body">
+          
+
+        <pre class="yukkuri">
+                へ-ﾍ　　　／￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣＼
+               ﾐ*´ｰ｀ﾐ　＜　　　　Please contact Admin, nya~|
+             ／　　　　|　　＼＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿／
+            / 　　　   |                                  
+           / "⌒ヽ | ｲ  |                                  
+      ＿＿ |　　　.ノ | | | |＿＿                            
+         ノく＿＿つ∪∪　　  ＼                                
+        （（＿＿＿＿＿＿＿＿_   ＼                            
+     ￣￣ヽつ￣￣￣￣￣￣ | |￣                               
+      ＿＿＿＿＿＿＿＿＿__| |                                
+                         | |                                 
+        </pre>
+        </section>
+      </div>
+    </div>
+
     <div v-bind:class="deleteModelClassObject" class="modal">
       <div class="modal-background"></div>
       <div class="modal-content">
@@ -354,6 +380,11 @@ export default {
 
   },
   computed: {
+    serverDownModelClassObject: function () {
+      return {
+        "is-active" : this.isServerError
+      }
+    },
     deleteModelClassObject: function () {
       return {
         "is-active" : this.showConfireDelete
@@ -375,6 +406,7 @@ export default {
       this.mqttConfigList = body;
 
     }, response => {
+      this.isServerError = true;
       console.log("error");
     });
   },
@@ -479,6 +511,7 @@ export default {
   },
   data: function() {
     return {
+      isServerError: false,
       needDeleteIndex: "",
       showConfireDelete: false,
       deleteConfigFName: "",
@@ -514,6 +547,9 @@ li {
 }
 a {
   color: #42b983;
+}
+.yukkuri {
+  font-family: "Courier New", Courier, monospace;
 }
 
 .mqtt.hero-body
