@@ -1,31 +1,28 @@
 <template>
-  <div id="app">
+  <div id="amazonIot">
     <!-- <img src="./assets/logo.png"> -->
-    <MqttConfig/>
+    <AmazonIotConfig/>
   </div>
 </template>
 
 <script>
-import MqttConfig from './components/MqttConfig.vue'
+import AmazonIotConfig from './components/AmazonIotConfig.vue'
 
 export default {
-  name: 'app',
+  name: 'amazonIot',
   components: {
-    MqttConfig
+    AmazonIotConfig
   }
 }
 </script>
 
-<style lang="css">
-    @import '../node_modules/bulma/css/bulma.css';
-</style>
-
 <style>
-#app {
+#amazonIot {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  margin-top: 60px;
 }
 </style>
