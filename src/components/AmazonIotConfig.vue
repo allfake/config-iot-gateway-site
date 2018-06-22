@@ -1,6 +1,6 @@
 <template>
   <div>
-<!--     <div v-bind:class="serverDownModelClassObject" class="modal">
+    <div v-bind:class="serverDownModelClassObject" class="modal">
       <div class="modal-background"></div>
       <div class="modal-content">
         <header class="modal-card-head">
@@ -25,7 +25,7 @@
         </section>
       </div>
     </div>
- -->
+
 
     <section class="hero is-primary">
       <div class="amazonIot hero-body">
