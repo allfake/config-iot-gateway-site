@@ -1,6 +1,5 @@
 <template>
   <div id="amazonIot">
-    <!-- <img src="./assets/logo.png"> -->
     <AmazonIotConfig/>
   </div>
 </template>

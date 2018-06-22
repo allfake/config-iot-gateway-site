@@ -392,7 +392,7 @@ export default {
     },
   },
   mounted() {
-    this.$http.get(window.location.protocol + "//" + window.location.hostname + ':8000/api/v1/mqtt/config').then(response => {
+    this.$http.get(this.basePath + ':8000/api/v1/mqtt/config').then(response => {
 
       var body = response.body;
 
@@ -441,7 +441,7 @@ export default {
       updateConfig.topic = this.$refs[topicRef][0].value.trim();
       updateConfig.f_name = this.mqttConfigList[index].f_name.trim();
 
-      this.$http.patch(window.location.protocol + "//" + window.location.hostname + ':8000/api/v1/mqtt/config',{config: updateConfig}).then(response => {
+      this.$http.patch(this.basePath + ':8000/api/v1/mqtt/config',{config: updateConfig}).then(response => {
 
           this.mqttConfigList[index].connection = response.body.config.connection;
           this.mqttConfigList[index].address = response.body.config.address;
@@ -466,7 +466,7 @@ export default {
         topic: newConfig.topic,
       }
 
-      this.$http.post(window.location.protocol + "//" + window.location.hostname + ':8000/api/v1/mqtt/config',{config: newMqttConfig}).then(response => {
+      this.$http.post(this.basePath + ':8000/api/v1/mqtt/config',{config: newMqttConfig}).then(response => {
 
           response.body.config.isEdit = false;
           this.mqttConfigList.unshift(response.body.config);
@@ -478,7 +478,7 @@ export default {
     },
     DeleteConfig: function() {
       var index = parseInt(this.needDeleteIndex);
-      this.$http.delete(window.location.protocol + "//" + window.location.hostname + ':8000/api/v1/mqtt/config/delete/' + this.mqttConfigList[index].f_name).then(response => {
+      this.$http.delete(this.basePath + ':8000/api/v1/mqtt/config/delete/' + this.mqttConfigList[index].f_name).then(response => {
 
           if (response.body == "Done")
           {
@@ -510,6 +510,7 @@ export default {
   },
   data: function() {
     return {
+      basePath: window.location.protocol + "//" + window.location.hostname,
       isServerError: false,
       needDeleteIndex: "",
       showConfireDelete: false,

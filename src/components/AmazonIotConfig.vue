@@ -1,101 +1,401 @@
 <template>
-  <div class="hello">
-    <div v-for="(m, index) in mqttConfigList">
-      <div v-if="!m.isEdit">
-        <span> {{m.connection}} </span><br/>
-        <span> {{m.address}} </span><br/>
-        <span> {{m.remote_username}} </span><br/>
-        <span> {{m.remote_password}} </span><br/>
-        <span> {{m.remote_clientid}} </span><br/>
-        <span> {{m.topic}} </span><br/>
-        <input type="checkbox" v-model="m.isEdit">
-      </div>
-      <div v-if="m.isEdit">
-        <input :ref="'connection' + index" v-bind:value="m.connection"/><br/>
-        <input :ref="'address' + index" v-bind:value="m.address"/><br/>
-        <input :ref="'remote_username' + index" v-bind:value="m.remote_username"/><br/>
-        <input :ref="'remote_password' + index" v-bind:value="m.remote_password"/><br/>
-        <input :ref="'remote_clientid' + index" v-bind:value="m.remote_clientid"/><br/>
-        <input :ref="'topic' + index" v-bind:value="m.topic"/><br/>
-        <button v-on:click="m.isEdit = false">Cancel</button>
-        <button v-on:click="UpdateConfig(index)">Submit</button>
+  <div>
+<!--     <div v-bind:class="serverDownModelClassObject" class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Server error</p>
+        </header>
+        <section class="modal-card-body">
+          
 
+        <pre class="yukkuri">
+                へ-ﾍ　　　／￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣＼
+               ﾐ*´ｰ｀ﾐ　＜　　　　Please contact Admin, nya~|
+             ／　　　　|　　＼＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿／
+            / 　　　   |                                  
+           / "⌒ヽ | ｲ  |                                  
+      ＿＿ |　　　.ノ | | | |＿＿                            
+         ノく＿＿つ∪∪　　  ＼                                
+        （（＿＿＿＿＿＿＿＿_   ＼                            
+     ￣￣ヽつ￣￣￣￣￣￣ | |￣                               
+      ＿＿＿＿＿＿＿＿＿__| |                                
+                         | |                                 
+        </pre>
+        </section>
       </div>
     </div>
+ -->
 
-    input form 1 <br/>
-    <input v-model="mqttConfig.connection"/><br/>
-    <input v-model="mqttConfig.address"/><br/>
-    <input v-model="mqttConfig.remote_username"/><br/>
-    <input v-model="mqttConfig.remote_password"/><br/>
-    <input v-model="mqttConfig.remote_clientid"/><br/>
-    <input v-model="mqttConfig.topic"/><br/>
+    <section class="hero is-primary">
+      <div class="amazonIot hero-body">
+        <div class="container">
+          <h1 class="title">
+            Amazon Iot Config
+          </h1>
+        </div>
+      </div>
+    </section>
 
-    <button v-on:click="AddConfig(mqttConfig)">Submit</button>
-  
+    <div class="config container">
 
+      <br/>
+
+      <div v-if="!amazonIotConfig.isEdit">
+        <br/>
+        <span>
+          <p class="label">Amazon Iot config <a type="checkbox" v-on:click="amazonIotConfig.isEdit = true">Edit</a></p>
+        </span>
+        <br/>
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label class="label">{{ TitleLabel('topic') }}</label>
+          </div>
+
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input readonly v-model="amazonIotConfig.topic" class="input is-small" type="text" placeholder=""/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label class="label">{{ TitleLabel('client_id') }}</label>
+          </div>
+
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input readonly v-model="amazonIotConfig.client_id" class="input is-small" type="text" placeholder=""/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label class="label">{{ TitleLabel('endpoint') }}</label>
+          </div>
+
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input readonly v-model="amazonIotConfig.endpoint" class="input is-small" type="text" placeholder=""/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label class="label">{{ TitleLabel('aws_certs path') }}</label>
+          </div>
+
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input readonly v-model="amazonIotConfig.aws_certs" class="input is-small" type="text" placeholder=""/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label class="label">{{ TitleLabel('Cert Root CA') }}</label>
+          </div>
+
+          <div class="field-body">
+            <div class="field is-grouped">
+              <p class="control">
+                <p class="file">
+                  <label class="file-label">
+                    <input class="file-input" type="file" name="rootCA" @change="fileUploadChange($event.target.name, $event.target.files);">
+                    <span class="file-cta">
+                      <p class="file-label">
+                        {{ uploadFileName['rootCA'] ? uploadFileName['rootCA'] : "Select file" }}
+                      </p>
+                    </span>
+                  </label>
+                </p>
+              </p>
+              <p class="control">
+                
+              </p>
+
+              <p class="control">
+                <a class="button" v-on:click="UploadFile('rootCA')">Upload</a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label class="label">{{ TitleLabel('cert.pem') }}</label>
+          </div>
+
+          <div class="field-body">
+            <div class="field is-grouped">
+              <p class="control">
+                <p class="file">
+                  <label class="file-label">
+                    <input class="file-input" type="file" name="cert" @change="fileUploadChange($event.target.name, $event.target.files);">
+                    <span class="file-cta">
+                      <p class="file-label">
+                        {{ uploadFileName.cert ? uploadFileName.cert : "Select file" }}
+                      </p>
+                    </span>
+                  </label>
+                </p>
+              </p>
+              <p class="control">
+                
+              </p>
+
+              <p class="control">
+                <a class="button" v-on:click="UploadFile('cert')">Upload</a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label class="label">{{ TitleLabel('Private key') }}</label>
+          </div>
+
+          <div class="field-body">
+            <div class="field is-grouped">
+              <p class="control">
+                <p class="file">
+                  <label class="file-label">
+                    <input class="file-input" type="file" name="privateKey" @change="fileUploadChange($event.target.name, $event.target.files);">
+                    <span class="file-cta">
+                      <p class="file-label">
+                        {{ uploadFileName.privateKey ? uploadFileName.privateKey : "Select file" }}
+                      </p>
+                    </span>
+                  </label>
+                </p>
+              </p>
+              <p class="control">
+                
+              </p>
+
+              <p class="control">
+                <a class="button" v-on:click="UploadFile('privateKey')">Upload</a>
+              </p>
+            </div>
+          </div>
+        </div>        
+
+      </div>
+      <div v-if="amazonIotConfig.isEdit">
+        <br/>
+        <form v-on:submit.prevent class="form-edit">
+          <br/>
+          <label class="label">Edit config</label>
+          <div class="field is-horizontal">
+            <div class="field-label">
+              <label class="label">{{ TitleLabel('topic') }}</label>
+            </div>
+
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <input class="input is-small" type="text" placeholder="" :ref="'topic'" v-bind:value="amazonIotConfig.topic"/><br/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label">
+              <label class="label">{{ TitleLabel('client_id') }}</label>
+            </div>
+
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <input class="input is-small" type="text" placeholder="" :ref="'client_id'" v-bind:value="amazonIotConfig.client_id"/><br/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label">
+              <label class="label">{{ TitleLabel('endpoint') }}</label>
+            </div>
+
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <input class="input is-small" type="text" placeholder="" :ref="'endpoint'" v-bind:value="amazonIotConfig.endpoint"/><br/>
+                  <p class="help">eg. : data.iot.us-west-2.amazonaws.com</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label">
+              <label class="label">{{ TitleLabel('aws_certs path') }}</label>
+            </div>
+
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <input class="input is-small" type="text" placeholder="" :ref="'aws_certs'" v-bind:value="amazonIotConfig.aws_certs"/><br/>
+                  <p class="help">recommend : {{ recommend.aws_certs }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field is-grouped is-grouped-centered">
+              <p class="control">
+                <a class="button is-light" v-on:click="amazonIotConfig.isEdit = false">Cancel</a>
+              </p>
+              <p class="control">
+                <a class="button is-primary" v-on:click="UpdateConfig()">Update</a>
+              </p>
+          </div>
+          <br/>
+        </form>
+      </div>
+      <br/>
+      <br/>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'AmazonIot',
+  name: 'amazonIotConfig',
   props: {
 
   },
+  computed: {
+    serverDownModelClassObject: function () {
+      return {
+        "is-active" : this.isServerError
+      }
+    },
+  },
   mounted() {
-    // this.$http.get('data',{url: "zzzz"}).then(response => {
+    this.$http.get(this.basePath + ':8000/api/v1/amazonIot/config').then(response => {
 
-    //   this.someData = response.body;
+      var body = response.body;
+      this.amazonIotConfig.topic = body.topic;
+      this.amazonIotConfig.client_id = body.client_id;
+      this.amazonIotConfig.endpoint = body.endpoint;
+      this.amazonIotConfig.aws_certs = body.aws_certs;
+      this.amazonIotConfig.isEdit = false;
 
-    // }, response => {
-    //   console.log("error");
-    // });
+    }, response => {
+      this.isServerError = true;
+      console.log("error");
+    });
+
+    this.$http.get(this.basePath + ':8000/api/v1/amazonIot/config/recommend').then(response => {
+
+      this.recommend.aws_certs = response.body.aws_certs;
+
+    }, response => {
+      this.isServerError = true;
+      console.log("error");
+    });
+
   },
   methods: {
-    UpdateConfig: function(index)
-    {
-      var connectionRef = "connection" + index;
-      var addressRef = "address" + index;
-      var remote_usernameRef = "remote_username" + index;
-      var remote_passwordRef = "remote_password" + index;
-      var remote_clientidRef = "remote_clientid" + index;
-      var topicRef = "topic" + index;
+    fileUploadChange: function(fieldName, fileData) {
+      this.uploadFileName[fieldName] = fileData[0].name;
+      this.uploadFileData[fieldName] = fileData[0];
 
-      this.mqttConfigList[index].connection = this.$refs[connectionRef][0].value;
-      this.mqttConfigList[index].address = this.$refs[addressRef][0].value;
-      this.mqttConfigList[index].remote_username = this.$refs[remote_usernameRef][0].value;
-      this.mqttConfigList[index].remote_password = this.$refs[remote_passwordRef][0].value;
-      this.mqttConfigList[index].remote_clientid = this.$refs[remote_clientidRef][0].value;
-      this.mqttConfigList[index].topic = this.$refs[topicRef][0].value;
-      this.mqttConfigList[index].isEdit = false;
+      this.$forceUpdate();
     },
-    AddConfig: function(newConfig) {
-      var newMqttConfig = {
-        connection: newConfig.connection,
-        address: newConfig.address,
-        remote_username: newConfig.remote_username,
-        remote_password: newConfig.remote_password,
-        remote_clientid: newConfig.remote_clientid,
-        topic: newConfig.topic,
-        isEdit: false
+    UploadFile: function(certType) {
+
+      if (this.uploadFileName[certType] == '') 
+      {
+        return
       }
-      this.mqttConfigList.push(newMqttConfig);
+
+      var formData = new FormData();
+      formData.append('cert', this.uploadFileData[certType], this.amazonIotConfig.topic);
+
+      this.$http.post(this.basePath + ':8000/api/v1/amazonIot/config/certs/' + certType, 
+      formData)
+      .then(response => {
+
+        this.uploadFileName[certType] = "";
+        this.$forceUpdate();
+        console.log("upload complete");
+
+      }, response => {
+        this.isServerError = true;
+        console.log("error");
+      });
+
+    },
+    TitleLabel: function(title) {
+      var replaceTitle = title.replace(new RegExp('_', 'g'), " ");
+      return replaceTitle.charAt(0).toUpperCase() + replaceTitle.slice(1);
+    },
+    UpdateConfig: function()
+    {
+      var topicRef = "topic";
+      var client_idRef = "client_id";
+      var endpointRef = "endpoint";
+      var aws_certsRef = "aws_certs";
+
+      var updateConfig = {};
+
+      updateConfig.topic = this.$refs[topicRef].value.trim();
+      updateConfig.client_id = this.$refs[client_idRef].value.trim();
+      updateConfig.endpoint = this.$refs[endpointRef].value.trim();
+      updateConfig.aws_certs = this.$refs[aws_certsRef].value.trim();
+
+      this.$http.patch(this.basePath + ':8000/api/v1/amazonIot/config',{config: updateConfig}).then(response => {
+
+        this.amazonIotConfig.topic = response.body.config.topic;
+        this.amazonIotConfig.client_id = response.body.config.client_id;
+        this.amazonIotConfig.endpoint = response.body.config.endpoint;
+        this.amazonIotConfig.aws_certs = response.body.config.aws_certs;
+        this.amazonIotConfig.isEdit = false;
+
+      }, response => {
+        this.isServerError = true;
+        console.log("error");
+      });
+
     },
   },
   data: function() {
     return {
+      basePath: window.location.protocol + "//" + window.location.hostname,
+      certType: "",
+      privateKeyName:  "",
+      certPemName: "",
+      uploadFileName: {},
+      privateKey: "",
+      certPem: "",
+      uploadFileData: {},
+      isServerError: false,
+      showAddNewConfig: false,
       message: 'Hello Vue!',
-      mqttConfigList : [],
-      mqttConfig: {
-        connection: "",
-        address: "",
-        remote_username: "",
-        remote_password: "",
-        remote_clientid: "",
+      recommend: {},
+      amazonIotConfig: {
         topic: "",
+        client_id: "",
+        endpoint: "",
+        aws_certs: "/root/.agent/certs",
+        isEdit: false
       }
-
     }
   }
 }
@@ -117,4 +417,20 @@ li {
 a {
   color: #42b983;
 }
+.yukkuri {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.amazonIot.hero-body
+{
+  padding: 1rem 1.5rem;
+}
+.form-add {
+  background: #0000; border: 2px solid transparent; border-image:linear-gradient(to right, #f0f 0px, #f0f 128px, #fff 80px, #fff 136px, #0ff 136px, #0ff 100% ); border-image-slice: 1;
+}
+
+.form-edit {
+  background: #0000; border: 2px solid transparent; border-image:linear-gradient(to right, #feffc0 0px, #feffc0 128px, #fff 80px, #fff 136px, #0ff 136px, #0ff 100% ); border-image-slice: 1;
+}
+
 </style>
