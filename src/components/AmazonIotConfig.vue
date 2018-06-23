@@ -128,6 +128,7 @@
               <p class="control">
                 <a class="button" v-on:click="UploadFile('rootCA')">Upload</a>
               </p>
+              <p class="help">last modified : {{  DateString(recommend.rootCA) }}</p>
             </div>
           </div>
         </div>
@@ -158,6 +159,7 @@
               <p class="control">
                 <a class="button" v-on:click="UploadFile('cert')">Upload</a>
               </p>
+              <p class="help">last modified : {{  DateString(recommend.cert) }}</p>
             </div>
           </div>
         </div>
@@ -188,6 +190,7 @@
               <p class="control">
                 <a class="button" v-on:click="UploadFile('privateKey')">Upload</a>
               </p>
+              <p class="help">last modified : {{ DateString(recommend.privateKey) }}</p>
             </div>
           </div>
         </div>        
@@ -250,19 +253,19 @@
               <div class="field">
                 <div class="control">
                   <input class="input is-small" type="text" placeholder="" :ref="'aws_certs'" v-bind:value="amazonIotConfig.aws_certs"/><br/>
-                  <p class="help">recommend : {{ recommend.aws_certs }}</p>
+                  <p class="help">recommend : <p class="message is-small">{{ recommend.aws_certs }}</p></p>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div class="field is-grouped is-grouped-centered">
-              <p class="control">
-                <a class="button is-light" v-on:click="amazonIotConfig.isEdit = false">Cancel</a>
-              </p>
-              <p class="control">
-                <a class="button is-primary" v-on:click="UpdateConfig()">Update</a>
-              </p>
+            <p class="control">
+              <a class="button is-light" v-on:click="amazonIotConfig.isEdit = false">Cancel</a>
+            </p>
+            <p class="control">
+              <a class="button is-primary" v-on:click="UpdateConfig()">Update</a>
+            </p>
           </div>
           <br/>
         </form>
@@ -276,9 +279,6 @@
 <script>
 export default {
   name: 'amazonIotConfig',
-  props: {
-
-  },
   computed: {
     serverDownModelClassObject: function () {
       return {
@@ -304,6 +304,11 @@ export default {
     this.$http.get(this.basePath + ':8000/api/v1/amazonIot/config/recommend').then(response => {
 
       this.recommend.aws_certs = response.body.aws_certs;
+      this.recommend.rootCA = response.body.rootCA;
+      this.recommend.cert = response.body.cert;
+      this.recommend.privateKey = response.body.privateKey;
+
+      this.$forceUpdate();
 
     }, response => {
       this.isServerError = true;
@@ -312,6 +317,15 @@ export default {
 
   },
   methods: {
+    DateString: function(dateData) {
+      if (dateData != undefined) {
+        return new Date(dateData).toLocaleString();
+      }
+      else 
+      {
+        return "Please upload.";
+      }
+    },
     fileUploadChange: function(fieldName, fileData) {
       this.uploadFileName[fieldName] = fileData[0].name;
       this.uploadFileData[fieldName] = fileData[0];
@@ -320,7 +334,7 @@ export default {
     },
     UploadFile: function(certType) {
 
-      if (this.uploadFileName[certType] == '') 
+      if (this.uploadFileName[certType] == '' || this.uploadFileData[certType] == undefined)
       {
         return
       }
@@ -333,7 +347,22 @@ export default {
       .then(response => {
 
         this.uploadFileName[certType] = "";
-        this.$forceUpdate();
+
+        this.$http.get(this.basePath + ':8000/api/v1/amazonIot/config/recommend').then(response => {
+
+          this.recommend.aws_certs = response.body.aws_certs;
+          this.recommend.rootCA = response.body.rootCA;
+          this.recommend.cert = response.body.cert;
+          this.recommend.privateKey = response.body.privateKey;
+
+          this.$forceUpdate();
+
+        }, response => {
+          this.$forceUpdate();
+          this.isServerError = true;
+          console.log("error");
+        });
+
         console.log("upload complete");
 
       }, response => {
@@ -387,7 +416,6 @@ export default {
       uploadFileData: {},
       isServerError: false,
       showAddNewConfig: false,
-      message: 'Hello Vue!',
       recommend: {},
       amazonIotConfig: {
         topic: "",
