@@ -287,32 +287,43 @@ export default {
     },
   },
   mounted() {
-    this.$http.get(this.basePath + ':8000/api/v1/amazonIot/config').then(response => {
 
-      var body = response.body;
-      this.amazonIotConfig.topic = body.topic;
-      this.amazonIotConfig.client_id = body.client_id;
-      this.amazonIotConfig.endpoint = body.endpoint;
-      this.amazonIotConfig.aws_certs = body.aws_certs;
-      this.amazonIotConfig.isEdit = false;
+    this.$http.get("/config.json").then(responseConfig => {
+
+      var serveConfig = responseConfig.body;
+
+      this.basePath = serveConfig.basePath;
+
+      this.$http.get(this.basePath + '/api/v1/amazonIot/config').then(response => {
+
+        var body = response.body;
+        this.amazonIotConfig.topic = body.topic;
+        this.amazonIotConfig.client_id = body.client_id;
+        this.amazonIotConfig.endpoint = body.endpoint;
+        this.amazonIotConfig.aws_certs = body.aws_certs;
+        this.amazonIotConfig.isEdit = false;
+
+      }, response => {
+        this.isServerError = true;
+        console.log("error");
+      });
+
+      this.$http.get(this.basePath + '/api/v1/amazonIot/config/recommend').then(response => {
+
+        this.recommend.aws_certs = response.body.aws_certs;
+        this.recommend.rootCA = response.body.rootCA;
+        this.recommend.cert = response.body.cert;
+        this.recommend.privateKey = response.body.privateKey;
+
+        this.$forceUpdate();
+
+      }, response => {
+        this.isServerError = true;
+        console.log("error");
+      });
 
     }, response => {
-      this.isServerError = true;
-      console.log("error");
-    });
-
-    this.$http.get(this.basePath + ':8000/api/v1/amazonIot/config/recommend').then(response => {
-
-      this.recommend.aws_certs = response.body.aws_certs;
-      this.recommend.rootCA = response.body.rootCA;
-      this.recommend.cert = response.body.cert;
-      this.recommend.privateKey = response.body.privateKey;
-
-      this.$forceUpdate();
-
-    }, response => {
-      this.isServerError = true;
-      console.log("error");
+      console.log("can not get config");
     });
 
   },
@@ -342,13 +353,13 @@ export default {
       var formData = new FormData();
       formData.append('cert', this.uploadFileData[certType], this.amazonIotConfig.topic);
 
-      this.$http.post(this.basePath + ':8000/api/v1/amazonIot/config/certs/' + certType, 
+      this.$http.post(this.basePath + '/api/v1/amazonIot/config/certs/' + certType, 
       formData)
       .then(response => {
 
         this.uploadFileName[certType] = "";
 
-        this.$http.get(this.basePath + ':8000/api/v1/amazonIot/config/recommend').then(response => {
+        this.$http.get(this.basePath + '/api/v1/amazonIot/config/recommend').then(response => {
 
           this.recommend.aws_certs = response.body.aws_certs;
           this.recommend.rootCA = response.body.rootCA;
@@ -389,7 +400,7 @@ export default {
       updateConfig.endpoint = this.$refs[endpointRef].value.trim();
       updateConfig.aws_certs = this.$refs[aws_certsRef].value.trim();
 
-      this.$http.patch(this.basePath + ':8000/api/v1/amazonIot/config',{config: updateConfig}).then(response => {
+      this.$http.patch(this.basePath + '/api/v1/amazonIot/config',{config: updateConfig}).then(response => {
 
         this.amazonIotConfig.topic = response.body.config.topic;
         this.amazonIotConfig.client_id = response.body.config.client_id;
