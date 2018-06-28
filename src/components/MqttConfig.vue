@@ -392,11 +392,11 @@ export default {
     },
   },
   mounted() {
-    this.$http.get("/").then(responseConfig => {
+    this.$http.get("/config").then(responseConfig => {
 
       var serveConfig = responseConfig.body;
 
-      this.basePath = serveConfig.config;
+      this.basePath = serveConfig.basePath;
 
       this.$http.get(this.basePath + ':8000/api/v1/mqtt/config').then(response => {
 
@@ -416,8 +416,7 @@ export default {
       });
 
     }, response => {
-      this.isServerError = true;
-      console.log("error");
+      console.log("can not get config");
     });
 
   },
