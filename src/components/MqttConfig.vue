@@ -392,22 +392,34 @@ export default {
     },
   },
   mounted() {
-    this.$http.get(this.basePath + ':8000/api/v1/mqtt/config').then(response => {
+    this.$http.get("/").then(responseConfig => {
 
-      var body = response.body;
+      var serveConfig = responseConfig.body;
 
-      for (var i = body.length - 1; i >= 0; i--) {
-        var objectBody = JSON.parse(body[i]);
-        body[i] = objectBody;
-        body[i].isEdit = false;
-      }
+      this.basePath = serveConfig.config;
 
-      this.mqttConfigList = body;
+      this.$http.get(this.basePath + ':8000/api/v1/mqtt/config').then(response => {
+
+        var body = response.body;
+
+        for (var i = body.length - 1; i >= 0; i--) {
+          var objectBody = JSON.parse(body[i]);
+          body[i] = objectBody;
+          body[i].isEdit = false;
+        }
+
+        this.mqttConfigList = body;
+
+      }, response => {
+        this.isServerError = true;
+        console.log("error");
+      });
 
     }, response => {
       this.isServerError = true;
       console.log("error");
     });
+
   },
   methods: {
     CancelDeletePopup: function() {
