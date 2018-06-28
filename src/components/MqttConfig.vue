@@ -392,7 +392,7 @@ export default {
     },
   },
   mounted() {
-    this.$http.get("/config").then(responseConfig => {
+    this.$http.get("/config.json").then(responseConfig => {
 
       var serveConfig = responseConfig.body;
 
